@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.abhinandankothari.and_p1s2.Config;
 import com.abhinandankothari.and_p1s2.contract.Movie;
+import com.abhinandankothari.and_p1s2.contract.Review;
 import com.abhinandankothari.and_p1s2.contract.Trailer;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class Api {
     public String sortCriteria;
     Retrofit retrofit;
     MoviesApi m;
+
     public Api() {
         retrofit = new Retrofit.Builder()
                 .baseUrl(API_URL)
@@ -43,10 +45,21 @@ public class Api {
     }
 
     public List<Trailer> ListofTrailers(int id) {
-        Call<TrailersResponse> call = m.getVideos(id,Config.API_KEY);
+        Call<TrailersResponse> call = m.getVideos(id, Config.API_KEY);
         try {
             TrailersResponse trailerResponse = call.execute().body();
             return trailerResponse.videos;
+        } catch (IOException ex) {
+            Log.e("ERROR", "Unable to get Data");
+            return null;
+        }
+    }
+
+    public List<Review> ListofReivews(int id) {
+        Call<ReviewsResponse> call = m.getReviews(id, Config.API_KEY);
+        try {
+            ReviewsResponse reviewsResponse = call.execute().body();
+            return reviewsResponse.reviews;
         } catch (IOException ex) {
             Log.e("ERROR", "Unable to get Data");
             return null;

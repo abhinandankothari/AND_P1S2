@@ -71,5 +71,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/label_trailers" />
+
+        <TextView
+            android:id="@+id/label_reviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/trailer_list"
+            android:text="Reviews" />
+
+        <ListView
+            android:id="@+id/review_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/label_reviews" />
     </RelativeLayout>
 </ScrollView>

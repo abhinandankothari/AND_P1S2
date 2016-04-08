@@ -13,8 +13,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.abhinandankothari.and_p1s2.R;
+import com.abhinandankothari.and_p1s2.adapters.ReviewAdapter;
 import com.abhinandankothari.and_p1s2.adapters.TrailerAdapter;
 import com.abhinandankothari.and_p1s2.contract.Movie;
+import com.abhinandankothari.and_p1s2.contract.Review;
 import com.abhinandankothari.and_p1s2.contract.Trailer;
 import com.abhinandankothari.and_p1s2.network.Api;
 import com.squareup.picasso.Picasso;
@@ -39,6 +41,8 @@ public class DetailActivity extends AppCompatActivity {
     ImageView movieThumb;
     @Bind(R.id.trailer_list)
     ListView trailerListView;
+    @Bind(R.id.review_list)
+    ListView reviewListView;
 
 
     @Override
@@ -83,8 +87,10 @@ public class DetailActivity extends AppCompatActivity {
         super.onResume();
         Bundle bundle = getIntent().getExtras();
         Movie movie = bundle.getParcelable(Movie.TAG);
-        FetchTrailersTask task = new FetchTrailersTask();
-        task.execute(movie.getId());
+        FetchTrailersTask trailersTask = new FetchTrailersTask();
+        FetchReviewsTask reviewsTask = new FetchReviewsTask();
+        trailersTask.execute(movie.getId());
+        reviewsTask.execute(movie.getId());
     }
 
     private List<Trailer> fetchTrailersList(int id) {
@@ -94,6 +100,20 @@ public class DetailActivity extends AppCompatActivity {
             allVideos.add(trailer);
         }
         return allVideos;
+    }
+
+    private List<Review> fetchReviewsList(int id) {
+        Api api = new Api();
+        List<Review> allReviws = new ArrayList<Review>();
+        int count = 0;
+        for (Review review : api.ListofReivews(id)) {
+            if (count < 5) {
+                allReviws.add(review);
+                count++;
+            } else
+                break;
+        }
+        return allReviws;
     }
 
     public class FetchTrailersTask extends AsyncTask<Integer, Void, List<Trailer>> {
@@ -107,6 +127,20 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected List<Trailer> doInBackground(Integer... params) {
             return fetchTrailersList(params[0]);
+        }
+    }
+
+    public class FetchReviewsTask extends AsyncTask<Integer, Void, List<Review>> {
+        @Override
+        protected void onPostExecute(List<Review> reviewList) {
+            super.onPostExecute(reviewList);
+            ReviewAdapter adapter = new ReviewAdapter(getApplicationContext(), reviewList);
+            reviewListView.setAdapter(adapter);
+        }
+
+        @Override
+        protected List<Review> doInBackground(Integer... params) {
+            return fetchReviewsList(params[0]);
         }
     }
 }

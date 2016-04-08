@@ -9,8 +9,13 @@ public interface MoviesApi {
     @GET("discover/movie")
     Call<MoviesResponse> listOfMovies(@Query("api_key") String api_key,
                                       @Query("sort_by") String sortCriteria);
+
     @GET("movie/{id}/videos")
     Call<TrailersResponse> getVideos(@Path("id") int movieId,
-                                 @Query("api_key") String api_key);
+                                     @Query("api_key") String api_key);
+
+    @GET("movie/{id}/reviews")
+    Call<ReviewsResponse> getReviews(@Path("id") int movieId,
+                                      @Query("api_key") String api_key);
 
 }
