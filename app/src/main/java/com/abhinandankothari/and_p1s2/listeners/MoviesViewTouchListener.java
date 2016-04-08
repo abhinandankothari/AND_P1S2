@@ -1,4 +1,4 @@
-package com.abhinandankothari.and_p1s2.listners;
+package com.abhinandankothari.and_p1s2.listeners;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

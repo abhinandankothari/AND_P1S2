@@ -16,9 +16,9 @@ import android.view.View;
 import com.abhinandankothari.and_p1s2.R;
 import com.abhinandankothari.and_p1s2.adapters.RecyclerViewAdapter;
 import com.abhinandankothari.and_p1s2.contract.Movie;
-import com.abhinandankothari.and_p1s2.listners.MoviesViewTouchListener;
-import com.abhinandankothari.and_p1s2.listners.OnMoviesTouchListener;
-import com.abhinandankothari.and_p1s2.network.MoviesApi;
+import com.abhinandankothari.and_p1s2.listeners.MoviesViewTouchListener;
+import com.abhinandankothari.and_p1s2.listeners.OnMoviesTouchListener;
+import com.abhinandankothari.and_p1s2.network.Api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Movie> fetchMoviesList() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String sort = sharedPref.getString("sort", "Popularity");
-        MoviesApi movies = new MoviesApi();
+        Api movies = new Api();
 
         List<Movie> allItems = new ArrayList<Movie>();
         for (Movie movie : movies.ListofMovies(sort)) {

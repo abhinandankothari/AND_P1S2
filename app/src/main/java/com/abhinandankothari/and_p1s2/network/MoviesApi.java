@@ -1,39 +1,16 @@
 package com.abhinandankothari.and_p1s2.network;
 
-import android.util.Log;
-
-import com.abhinandankothari.and_p1s2.Config;
-import com.abhinandankothari.and_p1s2.contract.Movie;
-
-import java.io.IOException;
-import java.util.List;
-
 import retrofit2.Call;
-import retrofit2.GsonConverterFactory;
-import retrofit2.Retrofit;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
-public class MoviesApi {
+public interface MoviesApi {
+    @GET("discover/movie")
+    Call<MoviesResponse> listOfMovies(@Query("api_key") String api_key,
+                                      @Query("sort_by") String sortCriteria);
+    @GET("movie/{id}/videos")
+    Call<TrailersResponse> getVideos(@Path("id") int movieId,
+                                 @Query("api_key") String api_key);
 
-    public static final String API_URL = "http://api.themoviedb.org/3/";
-    public String sortCriteria;
-
-    public List<Movie> ListofMovies(String sort) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        Movies m = retrofit.create(Movies.class);
-        if (sort.equals("Popularity")) {
-            this.sortCriteria = "popularity.desc";
-        } else
-            this.sortCriteria = "vote_average.desc";
-        Call<MoviesResponse> call = m.listOfMovies(Config.API_KEY, this.sortCriteria);
-        try {
-            MoviesResponse moviesResponse = call.execute().body();
-            return moviesResponse.movies;
-        } catch (IOException ex) {
-            Log.e("ERROR", "Unable to get Data");
-            return null;
-        }
-    }
 }
