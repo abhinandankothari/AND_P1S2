@@ -2,16 +2,24 @@ package com.abhinandankothari.and_p1s2.contract;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.BaseColumns;
 
 import com.abhinandankothari.and_p1s2.Config;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.ParseException;
 
-public class Movie implements Parcelable {
+public class Movie implements Parcelable, BaseColumns {
 
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
     public static final String TAG = "com.abhinandankothari.and_p1s2.contract.Movie";
+    public static final String TABLE_NAME = "movie";
+    public static final String COLUMN_MOVIE_ID = "id";
+    public static final String COLUMN_MOVIE_TITLE = "title";
+    public static final String COLUMN_MOVIE_RATING = "vote_average";
+    public static final String COLUMN_MOVIE_RELEASE_DATE = "release_date";
+    public static final String COLUMN_MOVIE_SYNOPSIS = "overview";
+    public static final String COLUMN_MOVIE_POSTER_PATH = "poster_path";
 
     @SerializedName("id")
     private int id;
@@ -26,7 +34,7 @@ public class Movie implements Parcelable {
     @SerializedName("release_date")
     private String movieReleaseDate;
 
-    public Movie(int id,String movieTitle, String moviePosterThumbUrl, String movieSynopsis, String movieRating, String movieReleaseDate) {
+    public Movie(int id, String movieTitle, String moviePosterThumbUrl, String movieSynopsis, String movieRating, String movieReleaseDate) {
         this.id = id;
         this.movieTitle = movieTitle;
         this.moviePosterThumbUrl = moviePosterThumbUrl;
@@ -44,7 +52,7 @@ public class Movie implements Parcelable {
     }
 
     public String getMoviePosterThumbUrl() {
-        return IMAGE_BASE_URL + moviePosterThumbUrl + "?api_key="+ Config.API_KEY;
+        return IMAGE_BASE_URL + moviePosterThumbUrl + "?api_key=" + Config.API_KEY;
     }
 
     public String getMovieSynopsis() {
@@ -94,7 +102,7 @@ public class Movie implements Parcelable {
     };
 
     public String getYearFromReleaseDate() throws ParseException {
-        if(this.getMovieReleaseDate() == null || this.getMovieReleaseDate().equals("")) return "";
-        return (this.getMovieReleaseDate().substring(0,4)=="")?"":this.getMovieReleaseDate().substring(0,4);
+        if (this.getMovieReleaseDate() == null || this.getMovieReleaseDate().equals("")) return "";
+        return (this.getMovieReleaseDate().substring(0, 4) == "") ? "" : this.getMovieReleaseDate().substring(0, 4);
     }
 }
