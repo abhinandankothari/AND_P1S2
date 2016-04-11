@@ -51,6 +51,18 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <ToggleButton
+            android:id="@+id/favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rating"
+            android:layout_toRightOf="@+id/img_thumb"
+            android:textOff="Mark As Favourite"
+            android:textOn="Unmark As Favourite"
+            android:layout_margin="20sp"
+            android:paddingLeft="20sp"
+            android:textSize="12sp"/>
+
         <TextView
             android:id="@+id/synopsis"
             android:layout_width="wrap_content"

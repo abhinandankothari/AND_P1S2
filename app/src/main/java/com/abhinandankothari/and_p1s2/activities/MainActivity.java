@@ -2,6 +2,8 @@ package com.abhinandankothari.and_p1s2.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +18,7 @@ import android.view.View;
 import com.abhinandankothari.and_p1s2.R;
 import com.abhinandankothari.and_p1s2.adapters.RecyclerViewAdapter;
 import com.abhinandankothari.and_p1s2.contract.Movie;
+import com.abhinandankothari.and_p1s2.data.MovieDBHelper;
 import com.abhinandankothari.and_p1s2.listeners.MoviesViewTouchListener;
 import com.abhinandankothari.and_p1s2.listeners.OnMoviesTouchListener;
 import com.abhinandankothari.and_p1s2.network.Api;
@@ -88,14 +91,39 @@ public class MainActivity extends AppCompatActivity {
     private List<Movie> fetchMoviesList() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String sort = sharedPref.getString("sort", "Popularity");
-        Api movies = new Api();
-
         List<Movie> allItems = new ArrayList<Movie>();
-        for (Movie movie : movies.ListofMovies(sort)) {
-            allItems.add(new Movie(movie.getId(), movie.getMovieTitle(), movie.getMoviePosterThumbUrl(), movie.getMovieSynopsis(),
-                    movie.getMovieRating(), movie.getMovieReleaseDate()));
+        if (!sort.equalsIgnoreCase("My Favourites")) {
+            Api movies = new Api();
+            for (Movie movie : movies.ListofMovies(sort)) {
+                allItems.add(new Movie(movie.getId(), movie.getMovieTitle(), movie.getMoviePosterThumbUrl(), movie.getMovieSynopsis(),
+                        movie.getMovieRating(), movie.getMovieReleaseDate()));
+            }
+            return allItems;
+        } else {
+            final SQLiteDatabase db = new MovieDBHelper(this).getReadableDatabase();
+            Cursor cursor;
+            cursor = db.query(Movie.TABLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+            int i;
+            for (i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+                allItems.add(i, new Movie(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(Movie.COLUMN_MOVIE_ID)),
+                        cursor.getString(cursor.getColumnIndex(Movie.COLUMN_MOVIE_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(Movie.COLUMN_MOVIE_POSTER_PATH)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(Movie.COLUMN_MOVIE_SYNOPSIS)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(Movie.COLUMN_MOVIE_RATING)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(Movie.COLUMN_MOVIE_RELEASE_DATE))));
+            }
+            cursor.close();
+            db.close();
+            return allItems;
         }
-        return allItems;
     }
 
     public class FetchMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
