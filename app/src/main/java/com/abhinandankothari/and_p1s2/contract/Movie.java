@@ -1,5 +1,8 @@
 package com.abhinandankothari.and_p1s2.contract;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
@@ -11,6 +14,9 @@ import java.text.ParseException;
 
 public class Movie implements Parcelable, BaseColumns {
 
+    public static final String CONTENT_AUTHORITY = "com.abhinandankothari.and_p1s2";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_MOVIE = "movie";
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
     public static final String TAG = "com.abhinandankothari.and_p1s2.contract.Movie";
     public static final String TABLE_NAME = "movie";
@@ -20,6 +26,11 @@ public class Movie implements Parcelable, BaseColumns {
     public static final String COLUMN_MOVIE_RELEASE_DATE = "release_date";
     public static final String COLUMN_MOVIE_SYNOPSIS = "overview";
     public static final String COLUMN_MOVIE_POSTER_PATH = "poster_path";
+    public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
+    public static final String CONTENT_TYPE =
+            ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
+    public static final String CONTENT_ITEM_TYPE =
+            ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
 
     @SerializedName("id")
     private int id;
@@ -104,5 +115,9 @@ public class Movie implements Parcelable, BaseColumns {
     public String getYearFromReleaseDate() throws ParseException {
         if (this.getMovieReleaseDate() == null || this.getMovieReleaseDate().equals("")) return "";
         return (this.getMovieReleaseDate().substring(0, 4) == "") ? "" : this.getMovieReleaseDate().substring(0, 4);
+    }
+
+    public static Uri buildMovieUri(long id) {
+        return ContentUris.withAppendedId(CONTENT_URI,id);
     }
 }

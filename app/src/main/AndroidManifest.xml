@@ -32,6 +32,10 @@
         <activity
             android:name="com.abhinandankothari.and_p1s2.activities.SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
+
+        <provider
+            android:name=".data.MovieProvider"
+            android:authorities="com.abhinandankothari.and_p1s2" />
     </application>
 
 </manifest>
