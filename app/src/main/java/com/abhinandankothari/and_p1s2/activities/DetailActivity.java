@@ -25,6 +25,7 @@ import com.abhinandankothari.and_p1s2.contract.Review;
 import com.abhinandankothari.and_p1s2.contract.Trailer;
 import com.abhinandankothari.and_p1s2.data.MovieDBHelper;
 import com.abhinandankothari.and_p1s2.network.Api;
+import com.abhinandankothari.and_p1s2.utility.ConnectionDetector;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -132,8 +133,12 @@ public class DetailActivity extends AppCompatActivity {
         if (checkMovieInDatabase()) favouriteButton.setChecked(true);
         FetchTrailersTask trailersTask = new FetchTrailersTask();
         FetchReviewsTask reviewsTask = new FetchReviewsTask();
-        trailersTask.execute(movie.getId());
-        reviewsTask.execute(movie.getId());
+        ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+        Boolean isInternetPresent = cd.isConnectingToInternet();
+        if (isInternetPresent) {
+            trailersTask.execute(movie.getId());
+            reviewsTask.execute(movie.getId());
+        }
     }
 
     private List<Trailer> fetchTrailersList(int id) {

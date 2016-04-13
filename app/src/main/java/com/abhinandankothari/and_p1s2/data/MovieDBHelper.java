@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.abhinandankothari.and_p1s2.contract.Movie;
 
 public class MovieDBHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "popularmovies.db";
 
     public MovieDBHelper(Context context) {
@@ -34,13 +34,14 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Movie.TABLE_NAME);
         onCreate(db);
     }
+
     public static ContentValues createMovieValues(Movie movie) {
         ContentValues values = new ContentValues();
         values.put(Movie.COLUMN_MOVIE_ID, movie.getId());
-        values.put(Movie.COLUMN_MOVIE_POSTER_PATH,movie.getMoviePosterThumbUrl());
-        values.put(Movie.COLUMN_MOVIE_RATING,movie.getMovieRating());
+        values.put(Movie.COLUMN_MOVIE_POSTER_PATH, movie.getMoviePosterThumbUrl());
+        values.put(Movie.COLUMN_MOVIE_RATING, movie.getMovieRating());
         values.put(Movie.COLUMN_MOVIE_SYNOPSIS, movie.getMovieSynopsis());
-        values.put(Movie.COLUMN_MOVIE_TITLE,movie.getMovieTitle());
+        values.put(Movie.COLUMN_MOVIE_TITLE, movie.getMovieTitle());
         values.put(Movie.COLUMN_MOVIE_RELEASE_DATE, movie.getMovieReleaseDate());
         return values;
     }

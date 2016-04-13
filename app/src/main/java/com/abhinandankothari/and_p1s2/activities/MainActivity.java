@@ -3,7 +3,6 @@ package com.abhinandankothari.and_p1s2.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,14 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.abhinandankothari.and_p1s2.R;
 import com.abhinandankothari.and_p1s2.adapters.RecyclerViewAdapter;
 import com.abhinandankothari.and_p1s2.contract.Movie;
-import com.abhinandankothari.and_p1s2.data.MovieDBHelper;
 import com.abhinandankothari.and_p1s2.listeners.MoviesViewTouchListener;
 import com.abhinandankothari.and_p1s2.listeners.OnMoviesTouchListener;
 import com.abhinandankothari.and_p1s2.network.Api;
+import com.abhinandankothari.and_p1s2.utility.ConnectionDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         FetchMoviesTask task = new FetchMoviesTask();
-        task.execute();
+        ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+        Boolean isInternetPresent = cd.isConnectingToInternet();
+        if (isInternetPresent) {
+            task.execute();
+        } else {
+            Toast.makeText(this, "You are offline, Check your Internet Connection or Switch to Favourite Movies", Toast.LENGTH_LONG);
+        }
     }
 
     @Override
@@ -100,15 +106,8 @@ public class MainActivity extends AppCompatActivity {
             }
             return allItems;
         } else {
-            final SQLiteDatabase db = new MovieDBHelper(this).getReadableDatabase();
-            Cursor cursor;
-            cursor = db.query(Movie.TABLE_NAME,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+            //Content Provider
+            Cursor cursor = getContentResolver().query(Movie.CONTENT_URI, null, null, null, null);
             int i;
             for (i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
                         cursor.getString(cursor.getColumnIndexOrThrow(Movie.COLUMN_MOVIE_RELEASE_DATE))));
             }
             cursor.close();
-            db.close();
             return allItems;
         }
     }
