@@ -1,12 +1,12 @@
 package com.abhinandankothari.and_p1s2.fragments;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.abhinandankothari.and_p1s2.R;
 import com.abhinandankothari.and_p1s2.activities.DetailActivity;
+import com.abhinandankothari.and_p1s2.activities.MainActivity;
 import com.abhinandankothari.and_p1s2.adapters.RecyclerViewAdapter;
 import com.abhinandankothari.and_p1s2.contract.Movie;
 import com.abhinandankothari.and_p1s2.listeners.MoviesViewTouchListener;
@@ -62,9 +63,19 @@ public class MainActivityFragment extends Fragment {
         moviesView.addOnItemTouchListener(new MoviesViewTouchListener(getActivity(), new OnMoviesTouchListener() {
             @Override
             public void onItemClick(View childView, int position) {
-                Intent movieIntent = new Intent(getActivity(), DetailActivity.class);
-                movieIntent.putExtra(Movie.TAG, recyclerViewAdapter.get(position));
-                startActivity(movieIntent);
+                if (MainActivity.mTwoPane) {
+                    Bundle arguments = new Bundle();
+                    arguments.putParcelable(Movie.TAG, recyclerViewAdapter.get(position));
+                    DetailActivityFragment fragment = new DetailActivityFragment();
+                    fragment.setArguments(arguments);
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.movie_detail_container, fragment, MainActivity.MOVIEDETAILFRAGMENT_TAG)
+                            .commit();
+                } else {
+                    Intent movieIntent = new Intent(getActivity(), DetailActivity.class);
+                    movieIntent.putExtra(Movie.TAG, recyclerViewAdapter.get(position));
+                    startActivity(movieIntent);
+                }
             }
         }));
     }

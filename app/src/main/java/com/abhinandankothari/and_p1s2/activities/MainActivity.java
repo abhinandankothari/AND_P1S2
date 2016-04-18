@@ -13,8 +13,8 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-//    @Bind(R.id.toolbar)
-//    Toolbar toolbar;
+    public static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
+    public static boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,18 +22,17 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-
+        if (findViewById(R.id.movie_detail_container) != null) {
+            mTwoPane = true;
+        } else {
+            mTwoPane = false;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

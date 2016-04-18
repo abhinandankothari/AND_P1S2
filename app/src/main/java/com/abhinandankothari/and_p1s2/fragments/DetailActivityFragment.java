@@ -1,13 +1,12 @@
 package com.abhinandankothari.and_p1s2.fragments;
 
-import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,30 +69,31 @@ public class DetailActivityFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         ButterKnife.bind(this, view);
-        Bundle bundle = getActivity().getIntent().getExtras();
-        movie = bundle.getParcelable(TAG);
-        movieTitle.setText(movie.getMovieTitle());
-        movieRating.setText(movie.getMovieRating() + "/10");
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            movie = arguments.getParcelable(TAG);
+            movieTitle.setText(movie.getMovieTitle());
+            movieRating.setText(movie.getMovieRating() + "/10");
 
-        try {
-            movieReleasDate.setText(movie.getYearFromReleaseDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
+            try {
+                movieReleasDate.setText(movie.getYearFromReleaseDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            movieSynopsis.setText(movie.getMovieSynopsis());
+            Picasso.with(getActivity())
+                    .load(movie.getMoviePosterThumbUrl())
+                    .placeholder(R.drawable.poster)
+                    .into(movieThumb);
+
+            addTouchListerToTrailersList();
+            addTouchListerToFavouriteButton();
         }
-
-        movieSynopsis.setText(movie.getMovieSynopsis());
-        Picasso.with(getActivity())
-                .load(movie.getMoviePosterThumbUrl())
-                .placeholder(R.drawable.poster)
-                .into(movieThumb);
-
-        addTouchListerToTrailersList();
-        addTouchListerToFavouriteButton();
         return view;
     }
 
@@ -121,16 +121,18 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Bundle bundle = getActivity().getIntent().getExtras();
-        movie = bundle.getParcelable(TAG);
-        if (checkMovieInDatabase()) favouriteButton.setChecked(true);
-        FetchTrailersTask trailersTask = new FetchTrailersTask();
-        FetchReviewsTask reviewsTask = new FetchReviewsTask();
-        ConnectionDetector cd = new ConnectionDetector(getActivity());
-        Boolean isInternetPresent = cd.isConnectingToInternet();
-        if (isInternetPresent) {
-            trailersTask.execute(movie.getId());
-            reviewsTask.execute(movie.getId());
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            movie = arguments.getParcelable(TAG);
+            if (checkMovieInDatabase()) favouriteButton.setChecked(true);
+            FetchTrailersTask trailersTask = new FetchTrailersTask();
+            FetchReviewsTask reviewsTask = new FetchReviewsTask();
+            ConnectionDetector cd = new ConnectionDetector(getActivity());
+            Boolean isInternetPresent = cd.isConnectingToInternet();
+            if (isInternetPresent) {
+                trailersTask.execute(movie.getId());
+                reviewsTask.execute(movie.getId());
+            }
         }
     }
 
@@ -202,6 +204,5 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        db.close();
     }
 }
