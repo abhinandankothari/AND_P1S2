@@ -127,11 +127,13 @@ public class DetailActivityFragment extends Fragment {
             if (checkMovieInDatabase()) favouriteButton.setChecked(true);
             FetchTrailersTask trailersTask = new FetchTrailersTask();
             FetchReviewsTask reviewsTask = new FetchReviewsTask();
-            ConnectionDetector cd = new ConnectionDetector(getActivity());
-            Boolean isInternetPresent = cd.isConnectingToInternet();
-            if (isInternetPresent) {
-                trailersTask.execute(movie.getId());
-                reviewsTask.execute(movie.getId());
+            if (getActivity() != null) {
+                ConnectionDetector cd = new ConnectionDetector(getActivity());
+                Boolean isInternetPresent = cd.isConnectingToInternet();
+                if (isInternetPresent) {
+                    trailersTask.execute(movie.getId());
+                    reviewsTask.execute(movie.getId());
+                }
             }
         }
     }
@@ -177,8 +179,10 @@ public class DetailActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Trailer> trailerList) {
             super.onPostExecute(trailerList);
-            TrailerAdapter adapter = new TrailerAdapter(getActivity(), trailerList);
-            trailerListView.setAdapter(adapter);
+            if (getActivity() != null) {
+                TrailerAdapter adapter = new TrailerAdapter(getActivity(), trailerList);
+                trailerListView.setAdapter(adapter);
+            }
         }
 
         @Override
@@ -191,8 +195,10 @@ public class DetailActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Review> reviewList) {
             super.onPostExecute(reviewList);
-            ReviewAdapter adapter = new ReviewAdapter(getActivity(), reviewList);
-            reviewListView.setAdapter(adapter);
+            if (getActivity() != null) {
+                ReviewAdapter adapter = new ReviewAdapter(getActivity(), reviewList);
+                reviewListView.setAdapter(adapter);
+            }
         }
 
         @Override
