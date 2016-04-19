@@ -30,14 +30,16 @@ public class Api {
     }
 
     public List<Movie> ListofMovies(String sort) {
+        Call<MoviesResponse> call;
         if (sort.equals("Popularity")) {
-            this.sortCriteria = "popularity.desc";
+            call = m.listOfPopularMovies(Config.API_KEY);
         } else
-            this.sortCriteria = "vote_average.desc";
-        Call<MoviesResponse> call = m.listOfMovies(Config.API_KEY, this.sortCriteria);
+            call = m.listOfTopRatedMovies(Config.API_KEY);
+
         try {
             MoviesResponse moviesResponse = call.execute().body();
-            return moviesResponse.movies;
+            if (moviesResponse.movies != null) return moviesResponse.movies;
+            else throw new IOException("API Key invalid or Internet Connection Turned Off");
         } catch (IOException ex) {
             Log.e("ERROR", "Unable to get Data");
             return null;
