@@ -89,7 +89,7 @@ public class MainActivityFragment extends Fragment {
         if (isInternetPresent) {
             task.execute();
         } else {
-            Toast.makeText(getActivity(), "You are offline, Check your Internet Connection or Switch to Favourite Movies", Toast.LENGTH_LONG);
+            Toast.makeText(getActivity(), "You are offline, Check your Internet Connection or Switch to Favourite Movies", Toast.LENGTH_LONG).show();
         }
     }
 
