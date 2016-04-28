@@ -36,6 +36,7 @@ public class MainActivityFragment extends Fragment {
 
     @Bind(R.id.recycler_view)
     RecyclerView moviesView;
+    FetchMoviesTask task;
 
     public MainActivityFragment() {
 
@@ -64,13 +65,7 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(View childView, int position) {
                 if (MainActivity.mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putParcelable(Movie.TAG, recyclerViewAdapter.get(position));
-                    DetailActivityFragment fragment = new DetailActivityFragment();
-                    fragment.setArguments(arguments);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.movie_detail_container, fragment, MainActivity.MOVIEDETAILFRAGMENT_TAG)
-                            .commit();
+                    PopulateDetailFragment(position);
                 } else {
                     Intent movieIntent = new Intent(getActivity(), DetailActivity.class);
                     movieIntent.putExtra(Movie.TAG, recyclerViewAdapter.get(position));
@@ -80,14 +75,33 @@ public class MainActivityFragment extends Fragment {
         }));
     }
 
+    private void PopulateDetailFragment(int position) {
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(Movie.TAG, recyclerViewAdapter.get(position));
+        DetailActivityFragment fragment = new DetailActivityFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.movie_detail_container, fragment, MainActivity.MOVIEDETAILFRAGMENT_TAG)
+                .commit();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        FetchMoviesTask task = new FetchMoviesTask();
+        task = new FetchMoviesTask();
         ConnectionDetector cd = new ConnectionDetector(getActivity());
         Boolean isInternetPresent = cd.isConnectingToInternet();
         if (isInternetPresent) {
             task.execute();
+            if (MainActivity.mTwoPane) {
+                DetailActivityFragment fragment = (DetailActivityFragment) getFragmentManager().findFragmentByTag(MainActivity.MOVIEDETAILFRAGMENT_TAG);
+                if (fragment != null) {
+                    getFragmentManager()
+                            .beginTransaction()
+                            .remove(fragment)
+                            .commit();
+                }
+            }
         } else {
             Toast.makeText(getActivity(), "You are offline, Check your Internet Connection or Switch to Favourite Movies", Toast.LENGTH_LONG).show();
         }
