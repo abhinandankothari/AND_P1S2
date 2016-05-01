@@ -2,6 +2,7 @@ package com.abhinandankothari.and_p1s2.fragments;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -63,6 +64,7 @@ public class DetailActivityFragment extends Fragment {
 
     SQLiteDatabase db;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,10 +72,22 @@ public class DetailActivityFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle arguments = getArguments();
+        outState.putBundle(Movie.TAG, arguments);
+    }
+    
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         ButterKnife.bind(this, view);
-        Bundle arguments = getArguments();
+        Bundle arguments;
+        if (savedInstanceState != null) {
+            arguments = savedInstanceState.getBundle(Movie.TAG);
+        } else {
+            arguments = getArguments();
+        }
         if (arguments != null) {
             movie = arguments.getParcelable(TAG);
             movieTitle.setText(movie.getMovieTitle());
